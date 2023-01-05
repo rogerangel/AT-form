@@ -10,33 +10,44 @@ $(document).ready(function () {
 
   const printData = async () => {
     const data = await objData;
+    // console.log(await objData);
     const dTOptions = {
       hour: "numeric",
       minute: "numeric",
     };
 
     $(function () {
+      hideSpinner();
       var dTable = $("#table").DataTable({
         paging: false,
         order: [[4, "desc"]],
-        oLanguage: {
-          sSearch: "Filter Data",
-        },
+        responsive: true,
         data: data,
         columns: [
           {
+            name: "col1",
+            title: "Name",
             data: null,
             render: function (data) {
               return data.Account + "-" + data.Name;
             },
           },
-          { data: "Platform" },
           {
+            name: "col2",
+            title: "Platform",
+            data: "Platform",
+          },
+          {
+            title: "Amount",
             data: "Amount",
             render: DataTable.render.number(",", ".", "2", "$"),
           },
-          { data: "Taken_By" },
           {
+            title: "Dispatcher",
+            data: "Taken_By",
+          },
+          {
+            title: "Time",
             data: null,
             render: function (data) {
               return new Date(data.Timestamp).toLocaleTimeString(
@@ -47,6 +58,7 @@ $(document).ready(function () {
             visible: true,
           },
           {
+            title: "Date",
             data: null,
             render: function (data) {
               return new Date(data.Timestamp).toLocaleDateString("en-US");
@@ -67,6 +79,10 @@ $(document).ready(function () {
           minDateFilter = new Date(this.value).toLocaleDateString("en-US");
           dTable.draw();
         });
+
+      $("#searchbox").on("keyup search input paste cut", function () {
+        dTable.search(this.value).draw();
+      });
     });
 
     // Date range filter
@@ -92,3 +108,7 @@ $(document).ready(function () {
 
   printData();
 });
+
+function hideSpinner() {
+  document.getElementById("spinner").style.display = "none";
+}
